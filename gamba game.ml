@@ -10,21 +10,22 @@ let score a b c n =
 
 let printInt = Printf.printf "%d\n"
 let printString = Printf.printf "%s\n"
-let inputInt () = Scanf.scanf "%d " (fun a -> a)
+let inputInt () = Scanf.scanf "%d " (fun a -> a) (*evil, %d is garbage*)
 
-let round ()=
+let round guess =
   let (g1, g2, g3) = ((Random.int 7), (Random.int 7) ,(Random.int 7)) in
-  let x = read_int () in
-  let points = score g1 g2 g3 x in
+  let points = score g1 g2 g3 guess in
+  let _ = printString "You got this many points: " in
   let _ = printInt points in
   points
 
-let rec rounds scoreTotal =
-  let pts = round () in
-  let _ = printString "You got this many points now" in
+let rec rounds scoreTotal guessFn =
+  let pts = round (guessFn ()) in
+  let _ = printString "You got this many points in total:" in
   let _ = printInt (scoreTotal + pts) in
-  rounds (scoreTotal + pts)
+  let _ = printString "\n\n" in
+  rounds (scoreTotal + pts) guessFn
 
 let _ =
   let _ = Random.self_init () in
-  rounds 0
+  rounds 0 read_int (*read_int works unlike scanf :( *)
