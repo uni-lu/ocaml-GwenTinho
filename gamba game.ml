@@ -5,7 +5,9 @@ let score a b c n =
   let eqa = n = a in
   let eqb = n = b in
   let eqc = n = c in
-  if gta && gtb || gta && gtc || gtb && gtc then 2 else if eqa || eqb || eqc then 1 else 0
+  if (gta && gtb && not gtc) || (gta && gtc && not gtb) || (gtb && gtc && not gta) then 2
+  else if eqa || eqb || eqc then 1
+  else 0
 
 let inputInt () = Scanf.scanf "%d " (fun a -> a) (*evil, %d is garbage*)
 
