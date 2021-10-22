@@ -18,9 +18,9 @@ let round guess =
   points
 
 let rec rounds scoreTotal guessFn =
-  let pts = round (guessFn ()) in
-  let _ = Printf.printf "You got this many points in total: %d\n\n" (scoreTotal + pts) in
-  rounds (scoreTotal + pts) guessFn
+  let pts = round (guessFn ()) + scoreTotal in
+  let _ = Printf.printf "You got this many points in total: %d\n\n" pts in
+  rounds pts guessFn
 
 let _ =
   let _ = Random.self_init () in
