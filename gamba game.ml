@@ -7,23 +7,17 @@ let score a b c n =
   let eqc = n = c in
   if gta && gtb || gta && gtc || gtb && gtc then 2 else if eqa || eqb || eqc then 1 else 0
 
-
-let printInt = Printf.printf "%d\n"
-let printString = Printf.printf "%s\n"
 let inputInt () = Scanf.scanf "%d " (fun a -> a) (*evil, %d is garbage*)
 
 let round guess =
   let (g1, g2, g3) = ((Random.int 7), (Random.int 7) ,(Random.int 7)) in
   let points = score g1 g2 g3 guess in
-  let _ = printString "You got this many points: " in
-  let _ = printInt points in
+  let _ = Printf.printf "You got this many points from this round: %d\n" points in
   points
 
 let rec rounds scoreTotal guessFn =
   let pts = round (guessFn ()) in
-  let _ = printString "You got this many points in total:" in
-  let _ = printInt (scoreTotal + pts) in
-  let _ = printString "\n\n" in
+  let _ = Printf.printf "You got this many points in total: %d\n\n" (scoreTotal + pts) in
   rounds (scoreTotal + pts) guessFn
 
 let _ =
