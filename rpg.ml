@@ -1,5 +1,3 @@
-Random.self_init ()
-
 type charClass =  Ranger | Warrior | Magician
 type charObject = GoldCoins | ChickenWings | Sponges
 type charBag = (charObject * int) list
@@ -22,13 +20,19 @@ type monster = {
 
 
 let addObjectToBag (b: charBag) (o: charObject * int) = o::b
+let objToString = function
+  | GoldCoins -> "coins"
+  | ChickenWings -> "chicken wing"
+  | Sponges -> "Sponges"
+
+let raceToString = function
+  | Golem -> "Golem"
+  | MosquitoesSwarm n -> Printf.sprintf "swarm of %d Mosquitoes" n
+  | Boar -> "Boar"
 
 let print_bag (b: charBag) = List.iter (fun (o:  charObject * int) ->
   let obj, count = o in
-  let objType = match obj with
-  | GoldCoins -> "coins"
-  | ChickenWings -> "chicken wing"
-  | Sponges -> "Sponges" in
+  let objType = objToString obj in
   Printf.printf "%d %s\n" count objType
 ) b
 
@@ -57,10 +61,40 @@ let monster_hit (m: monster) =
 
 let fight (c: character) (m: monster) =
   let battleOne = m.hp - (hit c) in
-  if battleOne <= 0 then {c with xp = c.xp + 5}
+  if battleOne <= 0 then {c with xp = c.xp + 5; bag = addObjectToBag c.bag (m.obj,(Random.int 4) + 1)}
   else let battleTwo = c.hp - (monster_hit m) in
   if battleTwo <= 0 then raise (Death "The monster killed you") else {c with hp = battleTwo; xp = c.xp + 5}
 
 let unfortunate_encounter (c: character) =
-  let m = random_monster () in
-  m (*finish this next time*)
+  let rc = random_monster () in
+  let hp = 3 in
+  let o = match rc with
+  | Golem -> GoldCoins
+  | MosquitoesSwarm n -> ChickenWings
+  | Boar -> Sponges in
+  let m: monster = {
+    rc;
+    hp;
+    obj= o
+  } in
+  let _ = Printf.printf "A %s appeared with %d health and holds %s \n" (raceToString rc) hp (objToString o) in
+  fight c m
+
+
+let rec playRounds n c = match n with
+  | 0 -> c
+  | n -> playRounds (n - 1) (unfortunate_encounter c)
+
+let _ =
+  let _ = Random.self_init () in
+  let rounds = 4 in
+  let c = { (* could make this customizable through user input ig *)
+    cls= Ranger;
+    bag= [];
+    hp= 10;
+    xp= 0
+  } in
+  try let c = playRounds rounds c in
+    let _ = Printf.printf "\nLook at all that LOOT!\n" in
+    (print_bag c.bag)
+  with Death s -> let _ = Printf.printf "%s \n" s in ()
