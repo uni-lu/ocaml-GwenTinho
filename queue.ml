@@ -56,4 +56,10 @@ let enqueueLst l =
     | h::t -> aux (enqueue acc h) t in
   aux empty l
 
-let _ = printQ (mapQ (fun x -> 2 * x) (enqueueLst [1;3;5;6]))
+let _ =
+  let q = mapQ (fun x -> 2 * x) (enqueueLst [1;3;5;6]) in
+  let _ = printQ q in
+  let _ = match peek q with
+  | None -> ()
+  | Some h ->  Printf.printf "%d \n" h
+in ()
