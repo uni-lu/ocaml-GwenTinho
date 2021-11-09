@@ -11,11 +11,11 @@ let rec splitFilter f l =
   let pos, neg = (aux l [] []) in
   (reverseList pos, reverseList neg)
 
-let rec prependList l1 l2 =
-  let rec aux l1 acc = match l1 with
+let appendFast l1 l2 =
+  let rec aux l2 acc = match l2 with
     | [] -> acc
     | h::t -> aux t (h::acc) in
-  aux l1 l2
+    reverseList (aux l2 (reverseList l1))
 
 let partition l = match l with
   | [] -> (([],[]),0)
@@ -23,11 +23,13 @@ let partition l = match l with
 
 let rec quickSort = function
     | [] -> []
-    | h::[] -> [h]
-    | l ->
-      let split, pivot = partition l in
-      let lo,hi = split in
-      prependList (reverseList (quickSort lo)) (pivot::(quickSort hi))
+    | pivot::t ->
+      let lo, hi = splitFilter (fun x -> x < pivot) t in
+      appendFast (quickSort lo) (pivot::(quickSort hi))
 
 
-let _ = List.iter (Printf.printf "%d \n") (quickSort [7;1;2;12;-2;3;-1;4])
+let printl l =
+  let _ = print_string (String.concat " " (List.map string_of_int l)) in
+  Printf.printf "\n"
+
+let _ = printl (quickSort [7;1;2;12;-2;3;-1;4])
