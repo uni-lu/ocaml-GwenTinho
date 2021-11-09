@@ -19,7 +19,12 @@ type monster = {
 }
 
 
-let addObjectToBag (b: charBag) (o: charObject * int) = o::b
+let rec addObjectToBag (b: charBag) (o: charObject) = match b with
+  | [] -> [(o,1)]
+  | (ob, n)::t when ob = o -> (o, n + 1)::t
+  | e :: t -> e :: addObjectToBag t o
+
+
 let objToString = function
   | GoldCoins -> "coins"
   | ChickenWings -> "chicken wing"
@@ -61,7 +66,7 @@ let monster_hit (m: monster) =
 
 let fight (c: character) (m: monster) =
   let battleOne = m.hp - (hit c) in
-  if battleOne <= 0 then {c with xp = c.xp + 5; bag = addObjectToBag c.bag (m.obj,(Random.int 4) + 1)}
+  if battleOne <= 0 then {c with xp = c.xp + 5; bag = addObjectToBag c.bag m.obj}
   else let battleTwo = c.hp - (monster_hit m) in
   if battleTwo <= 0 then raise (Death "The monster killed you") else {c with hp = battleTwo; xp = c.xp + 5}
 
