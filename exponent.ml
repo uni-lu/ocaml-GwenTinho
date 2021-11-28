@@ -30,7 +30,7 @@ let fastExp x n =
       aux next t in
   aux 1 expBits
 
-
+(*uses montgomery ladder apparently*)
 let fastExpMod x n m =
   let expBits = bitsFromInt n in
   let rec aux acc e = match e with
