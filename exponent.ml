@@ -41,5 +41,34 @@ let fastExpMod x n m =
       aux next t in
   aux 1 expBits
 
-let _ = Printf.printf "%d\n" (fastExpMod 200023 72013 541) (*should output 121*)
 
+let _ = Printf.printf "%d\n" (fastExpMod 200023 272113 541) (*should output 423*)
+
+(*the following is not tail recursive, but doesnt use that call to bits from int*)
+
+let dumbExpMod x n m =
+  let rec aux n = match n with
+    | 0 -> 1
+    | n ->
+      let value = (aux (n/2)) mod m in
+      let sqr = (value * value) mod m in
+      match n mod 2 with
+        | 0 ->  sqr
+        | 1 -> (sqr * x) mod m
+        | _ -> -1 in
+  aux n
+
+let _ = Printf.printf "%d\n" (dumbExpMod 200023 272113 541) (*should output 423*)
+
+
+(*https://www.youtube.com/watch?v=WAzGvZbaAOw*)
+(*the best implementation since it doesnt need a binary conversion + it uses tail recursion*)
+let smortExpMod x n m =
+  let rec aux acc x = function
+    | 0 -> acc
+    | n ->
+      let next = if n mod 2 == 0 then acc else (acc * x) mod m in
+      aux next ((x * x) mod m) (n/2) in
+  aux 1 x n
+
+let _ = Printf.printf "%d\n" (smortExpMod 200023 272113 541) (*should output 423*)
